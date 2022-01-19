@@ -1,6 +1,9 @@
 name: "Send to Allure Docker Service"
-description: "Greet someone"
+description: "Sends allure reports to dockerized server"
 author: "unickq"
+branding:
+  icon: 'upload'  
+  color: 'yellow'
 
 inputs:
   allure_results:
