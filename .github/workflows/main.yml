@@ -1,7 +1,15 @@
-on: [push]
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+  pull_request:
 
 jobs:
-  hello_world_job:
+  allure-docker-send-example:
     runs-on: ubuntu-latest
 
     name: Send to Allure Docker Service
