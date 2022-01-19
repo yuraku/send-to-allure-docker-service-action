@@ -3,14 +3,23 @@ description: "Greet someone"
 author: "unickq"
 
 inputs:
-  who-to-greet: # id of input
-    description: "Who to greet"
-    required: true
-    default: "World"
+  allure_results:
+    description: "Allure results dir"
+    required: false
+    default: 'allure-results'
+  project_id:
+    description: "Project id"
+    required: false
+    default: 'default'
+  auth:
+    description: "Security"
+    required: false
+    default: 'true'
+
 runs:
   using: "composite"
   steps:
-    - run: echo Hello ${{ inputs.who-to-greet }}.
+    - run: chmod +x $GITHUB_ACTION_PATH/script.sh
       shell: bash
-    - run: ${{ github.action_path }}/send.sh
+    - run: $GITHUB_ACTION_PATH/script.sh ${{ inputs.allure_results }} ${{ inputs.project_id }} ${{ inputs.auth }}
       shell: bash

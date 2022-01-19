@@ -3,10 +3,19 @@ on: [push]
 jobs:
   hello_world_job:
     runs-on: ubuntu-latest
-    name: A job to say hello
+
+    name: Send to Allure Docker Service
+
+    env:
+      ALLURE_SERVER_URL: ${{ secrets.ALLURE_SERVER_URL }}
+      ALLURE_SERVER_USER: ${{ secrets.ALLURE_SERVER_USER }}
+      ALLURE_SERVER_PASSWORD: ${{ secrets.ALLURE_SERVER_PASSWORD }}
+
     steps:
       - uses: actions/checkout@v2
-      - id: foo
-        uses: actions/send-to-allure-docker-service-action@v1
+
+      - uses: unickq/send-to-allure-docker-service-action@main
         with:
-          who-to-greet: "Mona the Octocat"
+          allure_results: allure-results
+          project_id: actions
+          auth: true
