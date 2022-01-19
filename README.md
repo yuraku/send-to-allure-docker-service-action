@@ -1,7 +1,7 @@
 # Send to Allure Docker Service action
 
-[![.github/workflows/main.yml](https://github.com/unickq/send-to-allure-docker-service-action/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/unickq/send-to-allure-docker-service-action/actions/workflows/main.yml)
-[![GitHub release badge](https://badgen.net/github/release/unickq/send-to-allure-docker-service-action/stable)](https://github.com/unickq/send-to-allure-docker-service-action/releases/latest)
+[![CI/CD](https://github.com/unickq/send-to-allure-docker-service-action/actions/workflows/main.yml/badge.svg)](https://github.com/unickq/send-to-allure-docker-service-action/actions/workflows/main.yml)
+[![GitHub release badge](https://badgen.net/github/release/unickq/send-to-allure-docker-service-action)](https://github.com/unickq/send-to-allure-docker-service-action/releases/latest)
 [![GitHub license badge](https://badgen.net/github/license/unickq/send-to-allure-docker-service-action)](http://www.apache.org/licenses/LICENSE-2.0)
 
 Sends results to [fescobar/allure-docker-service](https://github.com/fescobar/allure-docker-service).
