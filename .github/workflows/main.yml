@@ -24,6 +24,6 @@ jobs:
 
       - uses: unickq/send-to-allure-docker-service-action@main
         with:
-          allure_results: allure-results
+          allure_results: allure-results-example
           project_id: actions
           auth: true
