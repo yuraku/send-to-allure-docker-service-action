@@ -8,10 +8,10 @@ SECURITY_USER=$ALLURE_SERVER_USER
 SECURITY_PASS=$ALLURE_SERVER_PASSWORD
 ALLURE_SERVER=$ALLURE_SERVER_URL
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-FILES_TO_SEND=$(ls -dp $DIR/$ALLURE_RESULTS_DIRECTORY/* | grep -v /$)
+FILES_TO_SEND=$(ls -dp $ALLURE_RESULTS_DIRECTORY/* | grep -v /$)
 
 if [ -z "$FILES_TO_SEND" ]; then
+    echo "no files found"
     exit 1
 fi
 
@@ -39,7 +39,7 @@ if [[ "$IS_SECURE" == "true" ]]; then
         echo "no auth password provided"
         exit 1
     fi
-
+    
     # set +o xtrace
     echo "------------------LOGIN-----------------"
     curl -X POST "$ALLURE_SERVER/allure-docker-service/login" \
@@ -53,7 +53,7 @@ if [[ "$IS_SECURE" == "true" ]]; then
     CRSF_ACCESS_TOKEN_VALUE=$(cat cookiesFile | grep -o 'csrf_access_token.*' | cut -f2)
     echo "done"
     # echo "csrf_access_token value: $CRSF_ACCESS_TOKEN_VALUE"
-
+    
     echo "------------------SEND-RESULTS------------------"
     curl -X POST "$ALLURE_SERVER/allure-docker-service/send-results?project_id=$PROJECT_ID" \
     -H 'Content-Type: multipart/form-data' \
