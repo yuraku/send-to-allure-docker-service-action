@@ -69,16 +69,15 @@ fi
 
 if [[ "$ALLURE_GENERATE" == "true" ]]; then
     echo "-----------------GENERATE-REPORT----------------"
-    EXECUTION_NAME='GitHub Actions'
+    EXECUTION_NAME='GitHub+Actions'
     EXECUTION_FROM="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+    EXECUTION_FROM_ENCODED=="$(curl -s -o /dev/null -w %{url_effective} --get --data-urlencode "$EXECUTION_FROM" "" | cut -c 3-)"
 
-    GENERATE_URL="$ALLURE_SERVER/allure-docker-service/generate-report?project_id=$PROJECT_ID&execution_name=$EXECUTION_NAME"
-
+    GENERATE_URL="$ALLURE_SERVER/allure-docker-service/generate-report?project_id=$PROJECT_ID&execution_name=$EXECUTION_NAME&execution_from=$EXECUTION_FROM_ENCODED"
     if [[ "$IS_SECURE" == "true" ]]; then
-        RESPONSE=$(curl -X GET "$GENERATE_URL" --data-urlencode execution_from=${EXECUTION_FROM} -H "X-CSRF-TOKEN: $CRSF_ACCESS_TOKEN_VALUE" -b cookiesFile $FILES)
+        RESPONSE=$(curl -X GET "$GENERATE_URL" -H "X-CSRF-TOKEN: $CRSF_ACCESS_TOKEN_VALUE" -b cookiesFile $FILES)
     else
-        RESPONSE=$(curl -X GET "$GENERATE_URL" --data-urlencode execution_from=${EXECUTION_FROM} $FILES)
+        RESPONSE=$(curl -X GET "$GENERATE_URL" $FILES)
     fi
-    
     echo $(grep -o '"report_url":"[^"]*' <<< "$RESPONSE" | grep -o '[^"]*$')
 fi

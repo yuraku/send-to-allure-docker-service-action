@@ -28,6 +28,13 @@ Default - `true`
 
 ______
 
+### `generate`
+generate report after sending results
+
+Default - `false`
+
+______
+
 ## Secrets
 
 - `ALLURE_SERVER_URL` - **required** server URL. 
@@ -57,4 +64,5 @@ jobs:
           allure_results: allure-results
           project_id: actions
           auth: true
+          generate: true
 ```
