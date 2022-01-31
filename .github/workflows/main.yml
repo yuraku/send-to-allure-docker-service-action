@@ -27,3 +27,4 @@ jobs:
           allure_results: allure-results-example
           project_id: actions
           auth: true
+          generate: true

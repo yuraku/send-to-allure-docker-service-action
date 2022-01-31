@@ -3,6 +3,7 @@
 ALLURE_RESULTS_DIRECTORY=$1
 PROJECT_ID=$2
 IS_SECURE=$3
+ALLURE_GENERATE=$4
 
 SECURITY_USER=$ALLURE_SERVER_USER
 SECURITY_PASS=$ALLURE_SERVER_PASSWORD
@@ -54,14 +55,29 @@ if [[ "$IS_SECURE" == "true" ]]; then
     echo "done"
     # echo "csrf_access_token value: $CRSF_ACCESS_TOKEN_VALUE"
     
-    echo "------------------SEND-RESULTS------------------"
-    curl -X POST "$ALLURE_SERVER/allure-docker-service/send-results?project_id=$PROJECT_ID" \
-    -H 'Content-Type: multipart/form-data' \
-    -H "X-CSRF-TOKEN: $CRSF_ACCESS_TOKEN_VALUE" \
-    -b cookiesFile $FILES -ik
-    echo "done"
-    set -o xtrace
-else
-    echo "------------------SEND-RESULTS------------------"
-    curl -X POST "$ALLURE_SERVER/allure-docker-service/send-results?project_id=$PROJECT_ID" -H 'Content-Type: multipart/form-data' $FILES -ik
+#     echo "------------------SEND-RESULTS------------------"
+#     curl -X POST "$ALLURE_SERVER/allure-docker-service/send-results?project_id=$PROJECT_ID" \
+#     -H 'Content-Type: multipart/form-data' \
+#     -H "X-CSRF-TOKEN: $CRSF_ACCESS_TOKEN_VALUE" \
+#     -b cookiesFile $FILES -ik
+#     echo "done"
+#     set -o xtrace
+# else
+#     echo "------------------SEND-RESULTS------------------"
+#     curl -X POST "$ALLURE_SERVER/allure-docker-service/send-results?project_id=$PROJECT_ID" -H 'Content-Type: multipart/form-data' $FILES -ik
+fi
+
+if [[ "$ALLURE_GENERATE" == "true" ]]; then
+    echo "-----------------GENERATE-REPORT----------------"
+    EXECUTION_NAME='GitHub Actions'
+    EXECUTION_FROM='http://google.com'
+    EXECUTION_TYPE='Actions'
+
+    GENERATE_URL="$ALLURE_SERVER/allure-docker-service/generate-report?project_id=$PROJECT_ID&execution_name=$EXECUTION_NAME&execution_from=$EXECUTION_FROM&execution_type=$EXECUTION_TYPE"
+    if [[ "$IS_SECURE" == "true" ]]; then
+        RESPONSE=$(curl -X GET "$GENERATE_URL" -H "X-CSRF-TOKEN: $CRSF_ACCESS_TOKEN_VALUE" -b cookiesFile $FILES)
+    else
+        RESPONSE=$(curl -X GET "$GENERATE_URL" $FILES)
+    fi
+    $(grep -o '"report_url":"[^"]*' <<< "$RESPONSE" | grep -o '[^"]*$')
 fi
