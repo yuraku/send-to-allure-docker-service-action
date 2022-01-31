@@ -55,29 +55,30 @@ if [[ "$IS_SECURE" == "true" ]]; then
     echo "done"
     # echo "csrf_access_token value: $CRSF_ACCESS_TOKEN_VALUE"
     
-#     echo "------------------SEND-RESULTS------------------"
-#     curl -X POST "$ALLURE_SERVER/allure-docker-service/send-results?project_id=$PROJECT_ID" \
-#     -H 'Content-Type: multipart/form-data' \
-#     -H "X-CSRF-TOKEN: $CRSF_ACCESS_TOKEN_VALUE" \
-#     -b cookiesFile $FILES -ik
-#     echo "done"
-#     set -o xtrace
-# else
-#     echo "------------------SEND-RESULTS------------------"
-#     curl -X POST "$ALLURE_SERVER/allure-docker-service/send-results?project_id=$PROJECT_ID" -H 'Content-Type: multipart/form-data' $FILES -ik
+    echo "------------------SEND-RESULTS------------------"
+    curl -X POST "$ALLURE_SERVER/allure-docker-service/send-results?project_id=$PROJECT_ID" \
+    -H 'Content-Type: multipart/form-data' \
+    -H "X-CSRF-TOKEN: $CRSF_ACCESS_TOKEN_VALUE" \
+    -b cookiesFile $FILES -ik
+    echo "done"
+    set -o xtrace
+else
+    echo "------------------SEND-RESULTS------------------"
+    curl -X POST "$ALLURE_SERVER/allure-docker-service/send-results?project_id=$PROJECT_ID" -H 'Content-Type: multipart/form-data' $FILES -ik
 fi
 
 if [[ "$ALLURE_GENERATE" == "true" ]]; then
     echo "-----------------GENERATE-REPORT----------------"
     EXECUTION_NAME='GitHub Actions'
-    EXECUTION_FROM='http://google.com'
-    EXECUTION_TYPE='Actions'
+    EXECUTION_FROM="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
-    GENERATE_URL="$ALLURE_SERVER/allure-docker-service/generate-report?project_id=$PROJECT_ID&execution_name=$EXECUTION_NAME&execution_from=$EXECUTION_FROM&execution_type=$EXECUTION_TYPE"
+    GENERATE_URL="$ALLURE_SERVER/allure-docker-service/generate-report?project_id=$PROJECT_ID&execution_name=$EXECUTION_NAME"
+
     if [[ "$IS_SECURE" == "true" ]]; then
-        RESPONSE=$(curl -X GET "$GENERATE_URL" -H "X-CSRF-TOKEN: $CRSF_ACCESS_TOKEN_VALUE" -b cookiesFile $FILES)
+        RESPONSE=$(curl -X GET "$GENERATE_URL" --data-urlencode execution_from=${EXECUTION_FROM} -H "X-CSRF-TOKEN: $CRSF_ACCESS_TOKEN_VALUE" -b cookiesFile $FILES)
     else
-        RESPONSE=$(curl -X GET "$GENERATE_URL" $FILES)
+        RESPONSE=$(curl -X GET "$GENERATE_URL" --data-urlencode execution_from=${EXECUTION_FROM} $FILES)
     fi
-    $(grep -o '"report_url":"[^"]*' <<< "$RESPONSE" | grep -o '[^"]*$')
+    
+    echo $(grep -o '"report_url":"[^"]*' <<< "$RESPONSE" | grep -o '[^"]*$')
 fi
