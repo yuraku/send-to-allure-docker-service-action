@@ -32,6 +32,12 @@ ______
 generate report after sending results
 
 Default - `false`
+______
+
+### `clean_results`
+Clean previous allure results, before sending new
+
+Default - `false`
 
 ______
 
