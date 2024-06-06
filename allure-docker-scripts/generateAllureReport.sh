@@ -19,7 +19,7 @@ if [ "$(ls $PROJECT_REPORTS | wc -l)" != "0" ]; then
 fi
 
 LAST_REPORT_DIRECTORY=$(basename -- "$LAST_REPORT_PATH_DIRECTORY")
-#echo "LAST REPORT DIRECTORY >> $LAST_REPORT_DIRECTORY"
+echo "LAST REPORT DIRECTORY >> $LAST_REPORT_DIRECTORY"
 
 RESULTS_DIRECTORY=$STATIC_CONTENT_PROJECTS/$PROJECT_ID/results
 if [ ! -d "$RESULTS_DIRECTORY" ]; then
@@ -63,7 +63,14 @@ else
 fi
 
 echo "Generating report for PROJECT_ID: $PROJECT_ID"
-allure generate --clean $RESULTS_DIRECTORY -o $STATIC_CONTENT_PROJECTS/$PROJECT_ID/reports/latest
+docker run --rm -v $(pwd):/allure-results -v $(pwd):/allure-report allure-image generate --clean /allure-results -o /allure-report
+GENERATION_STATUS=$?
+
+if [ "$GENERATION_STATUS" -ne 0 ]; then
+    echo "Allure report generation failed with status $GENERATION_STATUS"
+    exit 1
+fi
+
 if [ "$OPTIMIZE_STORAGE" == "1" ] ; then
     ln -sf $ALLURE_RESOURCES/app.js $STATIC_CONTENT_PROJECTS/$PROJECT_ID/reports/latest/app.js
     ln -sf $ALLURE_RESOURCES/styles.css $STATIC_CONTENT_PROJECTS/$PROJECT_ID/reports/latest/styles.css
